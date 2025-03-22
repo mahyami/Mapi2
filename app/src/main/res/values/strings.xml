@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MaPi</string>
-    <string name="action_go">Go</string>
-    <string name="baking_title">Baking with Gemini</string>
-    <string name="label_prompt">Prompt</string>
-    <string name="prompt_placeholder">Provide a recipe for the baked goods in the image</string>
-    <string name="image1_description">Cupcake</string>
-    <string name="image2_description">Cookies</string>
-    <string name="image3_description">Cake</string>
-    <string name="results_placeholder">(Results will appear here)</string>
+    <string name="title_prompt">What are you craving right now?\n</string>
+    <string name="title_sync_initial">Click to sync your Google Maps saved places!</string>
+    <string name="title_sync_loading">Syncing</string>
+    <string name="title_gemini_resync">RE</string>
+    <string name="button_gemini_go">GO</string>
+    <string name="input_placeholder">Tell me about your cravings!</string>
+    <string name="maps_url">Google Maps</string>
+    <string name="nothing_found">I couldn\'t find anything from your locations that matched your criteria! :( </string>
 </resources>
