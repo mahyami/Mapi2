@@ -1,0 +1,123 @@
+{
+  "html_attributions" : [],
+  "result" :
+  {
+    "business_status" : "OPERATIONAL",
+    "curbside_pickup" : false,
+    "delivery" : false,
+    "dine_in" : true,
+    "editorial_summary" :
+    {
+      "language" : "en",
+      "overview" : "Robust Lyonnaise dishes & set menus served in a down-to-earth venue with a vintage vibe."
+    },
+    "formatted_address" : "23 Rue Claudia, 69002 Lyon, France",
+    "formatted_phone_number" : "04 78 37 44 31",
+    "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+    "icon_background_color" : "#FF9E67",
+    "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet",
+    "international_phone_number" : "+33 4 78 37 44 31",
+    "name" : "Bouchon Comptoir Brunet",
+    "opening_hours" :
+    {
+      "open_now" : false,
+      "weekday_text" :
+      [
+        "Monday: 12:00 – 2:00 pm, 7:00 – 10:30 pm",
+        "Tuesday: Closed",
+        "Wednesday: Closed",
+        "Thursday: 12:00 – 2:00 pm, 7:00 – 10:30 pm",
+        "Friday: 12:00 – 2:00 pm, 7:00 – 10:30 pm",
+        "Saturday: 12:00 – 2:00 pm, 7:00 – 10:30 pm",
+        "Sunday: 12:00 – 2:00 pm, 7:00 – 10:30 pm"
+      ]
+    },
+    "place_id" : "ChIJ1V2sf_jq9EcRWTXXJl-REgA",
+    "rating" : 4.4,
+    "reference" : "ChIJ1V2sf_jq9EcRWTXXJl-REgA",
+    "reservable" : true,
+    "reviews" :
+    [
+      {
+        "author_name" : "Alex Iosif",
+        "author_url" : "https://www.google.com/maps/contrib/113960264935609480418/reviews",
+        "language" : "en",
+        "original_language" : "en",
+        "profile_photo_url" : "https://lh3.googleusercontent.com/a-/ALV-UjUEKhYqIhYZRhV1bRr4bF3dGihQntXwYCynzXqdOCxWdiuoWIc=s128-c0x00000000-cc-rp-mo",
+        "rating" : 5,
+        "relative_time_description" : "a month ago",
+        "text" : "Actually perfect food. Everything is cooked flawlessly. Had the poached egg with wine sauce then asked for the menu as I wanted to also have another starter before the main, just to experience more of the food here while in town, knowing I won’t be back too soon. Service is also amazing. Can only praise this restaurant and its staff, as well as atmosphere. Unpretentious and truly delicious.",
+        "time" : 1717965563,
+        "translated" : false
+      },
+      {
+        "author_name" : "Olivera Kis",
+        "author_url" : "https://www.google.com/maps/contrib/108995320045500857833/reviews",
+        "language" : "en",
+        "original_language" : "en",
+        "profile_photo_url" : "https://lh3.googleusercontent.com/a/ACg8ocIZlKb7ZybvCDu7RxHAOhPxjjhxskqT82NpQ1-i9SuACTgA7Q=s128-c0x00000000-cc-rp-mo",
+        "rating" : 5,
+        "relative_time_description" : "3 months ago",
+        "text" : "Authentic atmosphere with its cozy ambiance and charming decor - it's a delightful place to savor great local dishes.",
+        "time" : 1713265401,
+        "translated" : false
+      },
+      {
+        "author_name" : "Susan Caruso",
+        "author_url" : "https://www.google.com/maps/contrib/106842227892896337576/reviews",
+        "language" : "en",
+        "original_language" : "en",
+        "profile_photo_url" : "https://lh3.googleusercontent.com/a/ACg8ocKh0YUXu3ZZjnkqjcryc-4Lufc2ghq8jd3eBiaOAg-GWVgLcjM=s128-c0x00000000-cc-rp-mo",
+        "rating" : 5,
+        "relative_time_description" : "4 months ago",
+        "text" : "A delightful dinner in a warm and very welcoming atmosphere! Excellent service by a charming young staff.  Each course was flavorful and beautifully presented. The house terrine was extraordinary.  Quenelle was well worth the wait as they make each fresh. Nicely prepared vegetables were a surprise accompaniment. Best Macon we have had during our visit. Ended this lovely experience with a demi Saint Marcellan and glass of Beaujolais. Highly recommended!",
+        "time" : 1711364599,
+        "translated" : false
+      },
+      {
+        "author_name" : "Terence Israel",
+        "author_url" : "https://www.google.com/maps/contrib/117706795224660745102/reviews",
+        "language" : "en",
+        "original_language" : "en",
+        "profile_photo_url" : "https://lh3.googleusercontent.com/a-/ALV-UjVonHTdhUbtGbIluGjTHeqUgTr8IuOthNyDMtxT3fFORRTAgMYJ=s128-c0x00000000-cc-rp-mo-ba5",
+        "rating" : 5,
+        "relative_time_description" : "9 months ago",
+        "text" : "Probably one of the best services we’ve encountered so far in Europe. The staff was patient, helpful and accommodating.\n\nThe escargots were plump and full and the pork belly was soft and succulent.\n\nCan’t recommend this place enough!",
+        "time" : 1696745017,
+        "translated" : false
+      },
+      {
+        "author_name" : "hey",
+        "author_url" : "https://www.google.com/maps/contrib/118288397669475304435/reviews",
+        "language" : "en",
+        "original_language" : "en",
+        "profile_photo_url" : "https://lh3.googleusercontent.com/a/ACg8ocKBvzivOjwKY6IFeuvU_qg50pB-qguiH6xXCG81ZnLRcDMJDw=s128-c0x00000000-cc-rp-mo",
+        "rating" : 5,
+        "relative_time_description" : "a month ago",
+        "text" : "We enjoyed good wine and Lyonnaise cuisine and are grateful to our friend from Lyon who introduced us to this lovely bouchon.\nI highly recommend the Chartreuse as an after-dinner drink. The best.",
+        "time" : 1717885621,
+        "translated" : false
+      }
+    ],
+    "serves_beer" : true,
+    "serves_breakfast" : false,
+    "serves_brunch" : false,
+    "serves_dinner" : true,
+    "serves_lunch" : true,
+    "serves_vegetarian_food" : false,
+    "serves_wine" : true,
+    "types" :
+    [
+      "restaurant",
+      "food",
+      "point_of_interest",
+      "establishment"
+    ],
+    "url" : "https://maps.google.com/?cid=5226387440350553",
+    "user_ratings_total" : 1191,
+    "utc_offset" : 120,
+    "vicinity" : "23 Rue Claudia, Lyon",
+    "website" : "https://bouchonlyonnaisbrunet.com/fr"
+  },
+  "status" : "OK"
+}
