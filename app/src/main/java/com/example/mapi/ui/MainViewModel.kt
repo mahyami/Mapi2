@@ -1,15 +1,17 @@
 package com.example.mapi.ui
 
-import android.content.Context
+import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapi.domain.GetPlacesIdsDomainService
+import com.example.mapi.domain.GetPlacesCoordinatesDomainService
 import com.example.mapi.domain.PlacesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -17,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getPlacesIds: GetPlacesIdsDomainService,
+    private val getPlacesCoordinates: GetPlacesCoordinatesDomainService,
     private val placesRepository: PlacesRepository,
 ) : ViewModel() {
 
@@ -42,43 +44,46 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun onTakeoutCsvDataReceived(context: Context, isSuccess: Boolean) {
-        viewModelScope.launch {
-            if (isSuccess) {
-                getPlacesDetails(context)
-            } else {
-                _uiState.update {
-                    PlacesUiState.Sync.Initial
-                }
-                emitToastEvent("Takeout data not received")
-            }
-        }
-    }
-
-    private fun getPlacesDetails(context: Context) {
+    fun onSyncClicked(resources: Resources) {
         viewModelScope.launch {
             _uiState.update {
                 PlacesUiState.Sync.Loading
             }
 
-            placesRepository.getPlacesDetails(getPlacesIds())
-                .collectLatest { placesDetailsReceived ->
-                    if (placesDetailsReceived) {
-                        _uiState.update {
-                            PlacesUiState.Gemini.PlacesRecommendation(
-                                PlacesUiState.Gemini.Places.Found(
-                                    emptyList()
-                                )
-                            )
-                        }
-                        Log.d("MAHYA:: MainViewModel", "Places details received")
-                    } else {
-                        _uiState.update {
-                            PlacesUiState.Sync.Initial
-                        }
-                        emitToastEvent("All places details not received")
+            val coordinates = getPlacesCoordinates(resources)
+            Log.d("MAHYA:: MainViewModel", "getPlacesDetails : coordinates $coordinates")
+
+            placesRepository.getPlacesIdsFromCoordinates(
+                coordinates
+            ).map { placesIdReceived ->
+                when (placesIdReceived) {
+                    PlacesRepository.PlaceIdResult.Failure -> {
+                        Log.d(
+                            "MAHYA:: MainViewModel",
+                            "nothing received!! "
+                        )
+                        null
+                    }
+
+                    is PlacesRepository.PlaceIdResult.Success -> {
+                        Log.d(
+                            "MAHYA:: MainViewModel",
+                            "getPlacesDetails : placesIds ${placesIdReceived.ids}"
+                        )
+                        placesRepository.getPlacesDetails(placesIdReceived.ids)
                     }
                 }
+            }.collect {
+                it?.collectLatest {
+                    _uiState.update {
+                        PlacesUiState.Gemini.PlacesRecommendation(
+                            PlacesUiState.Gemini.Places.Found(
+                                emptyList()
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -110,10 +115,6 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onSyncButtonClicked() {
-        TODO("get places info")
     }
 
     fun onOpenMapsClicked(url: String) {

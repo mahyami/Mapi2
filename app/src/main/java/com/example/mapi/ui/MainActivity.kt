@@ -33,9 +33,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val uiState by viewModel.uiState.collectAsState()
                     MainScreen(
-                        onSyncButtonClicked = {
-                            viewModel.onSyncButtonClicked()
-                        },
+                        onSyncButtonClicked = { viewModel.onSyncClicked(resources) },
                         onAskGeminiButtonClicked = {
                             viewModel.onSubmitButtonClicked(it)
                         },

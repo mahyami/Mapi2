@@ -1,7 +1,6 @@
 package com.example.mapi.data.local
 
 import androidx.room.*
-import com.google.mapi.data.local.LocalPlace
 
 @Dao
 interface PlacesDao {
