@@ -4,23 +4,23 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapi.data.GeminiResponseParser
 import com.example.mapi.domain.GetPlacesCoordinatesDomainService
 import com.example.mapi.domain.PlacesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getPlacesCoordinates: GetPlacesCoordinatesDomainService,
     private val placesRepository: PlacesRepository,
+    private val geminiResponseParser: GeminiResponseParser,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<PlacesUiState>(
@@ -133,17 +133,12 @@ class MainViewModel @Inject constructor(
     }
 
     private fun parseGeminiResultToUiModel(response: String): List<PlaceUiModel> {
-        val placeUiModels = mutableListOf<PlaceUiModel>()
-        val jsonObject = JSONObject(response)
-        val jsonArray = jsonObject.getJSONArray("gemini_result")
-
-        for (i in 0 until jsonArray.length()) {
-            val item = jsonArray.getJSONObject(i)
-            val name = item.getString("name")
-            val url = item.getString("url")
-            placeUiModels.add(PlaceUiModel(name, url))
+        val items = geminiResponseParser.parseResponseItems(response)
+        return items.map {
+            PlaceUiModel(
+                name = it.name,
+                url = it.url
+            )
         }
-
-        return placeUiModels
     }
 }
