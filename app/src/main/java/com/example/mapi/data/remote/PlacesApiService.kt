@@ -9,12 +9,12 @@ import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 
-class MapsApiService @Inject constructor(
-    private val mapsHttpClient: MapsHttpClient
+class PlacesApiService @Inject constructor(
+    private val placesHttpClient: PlacesHttpClient
 ) {
 
     suspend fun getPlaceDetails(id: String): Result<RemotePlace> {
-        return mapsHttpClient.getClient()
+        return placesHttpClient.getClient()
             .get {
                 url {
                     header("X-Goog-FieldMask", "*")
@@ -26,7 +26,7 @@ class MapsApiService @Inject constructor(
 
     suspend fun searchNearbyPlacesToGetPlaceId(
         coordinate: Coordinate,
-        radius: Double = 10.0,
+        radius: Double = 1.0,
         maxResults: Int = 1
     ): Result<List<String>> {
         return try {
@@ -44,7 +44,7 @@ class MapsApiService @Inject constructor(
                 )
             )
 
-            val response = mapsHttpClient.getClient()
+            val response = placesHttpClient.getClient()
                 .post {
                     url {
                         appendPathSegments(SEARCH_NEARBY_PATH)

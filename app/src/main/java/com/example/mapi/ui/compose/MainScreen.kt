@@ -130,7 +130,9 @@ private fun GeminiPlacesRecommendation(
                     fontSize = 28.sp,
                     lineHeight = 32.sp,
                     fontFamily = FontFamily(Font(R.font.raleway_bold)),
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 32.dp),
                 )
                 Image(
                     painter = painterResource(id = R.drawable.vertical_maps_sync),

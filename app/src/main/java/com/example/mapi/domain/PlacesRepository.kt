@@ -5,20 +5,20 @@ import com.example.mapi.data.toLocalPlace
 import com.example.mapi.data.gemini.GeminiService
 import com.example.mapi.data.local.PlacesDao
 import com.example.mapi.data.remote.Coordinate
-import com.example.mapi.data.remote.MapsApiService
+import com.example.mapi.data.remote.PlacesApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class PlacesRepository @Inject constructor(
-    private val mapsApiService: MapsApiService,
+    private val placesApiService: PlacesApiService,
     private val placesDao: PlacesDao,
     private val geminiService: GeminiService,
 ) {
 
     fun getPlacesIdsFromCoordinates(coordinates: List<Coordinate>): Flow<PlaceIdResult> = flow {
         coordinates.map { coordinate ->
-            mapsApiService.searchNearbyPlacesToGetPlaceId(coordinate)
+            placesApiService.searchNearbyPlacesToGetPlaceId(coordinate)
                 .map {
                     emit(PlaceIdResult.Success(it))
                 }
@@ -46,7 +46,7 @@ class PlacesRepository @Inject constructor(
     suspend fun sendMessage(prompt: String) = geminiService.sendMessage(prompt)
 
     private fun getPlaceDetails(id: String): Flow<PlaceResult> = flow {
-        mapsApiService.getPlaceDetails(id)
+        placesApiService.getPlaceDetails(id)
             .map {
                 Log.d("MAHYA:: PlacesRepository", "getPlaceDetails : $it")
                 placesDao.insertPlace(it.toLocalPlace())
