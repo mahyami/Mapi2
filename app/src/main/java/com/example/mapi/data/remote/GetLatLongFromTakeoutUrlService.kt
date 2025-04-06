@@ -3,15 +3,14 @@ package com.example.mapi.data.remote
 import android.util.Log
 import com.example.mapi.data.remote.models.Coordinate
 import com.example.mapi.data.remote.services.ICoordinatesService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-class GetLatLongFromTakeoutUrlService @Inject constructor() : ICoordinatesService {
-    private val client = OkHttpClient()
+class GetLatLongFromTakeoutUrlService @Inject constructor(
+    private val takeoutHttpClient: TakeoutHttpClient
+) : ICoordinatesService {
     private val TAG = "GetLatLongService"
 
     override suspend fun getCoordinatesFromUrl(url: String): Coordinate? {
@@ -19,41 +18,29 @@ class GetLatLongFromTakeoutUrlService @Inject constructor() : ICoordinatesServic
         return extractLatLong(mapsUrl)
     }
 
-    private suspend fun getMapsUrlWithLatAndLong(url: String): String =
-        withContext(Dispatchers.IO) {
-            val request = Request.Builder()
-                .url(url)
-                .header("Content-Type", "application/json")
-                .build()
+    private suspend fun getMapsUrlWithLatAndLong(url: String): String {
+        return try {
+            val response = takeoutHttpClient.getClient().get(url)
+            val responseBody = response.bodyAsText()
+            
+            // Define a regex pattern to match the desired URL format
+            val pattern = Pattern.compile(
+                "https://www\\.google\\.com/maps/preview/place/[^,]+,[^,]+,[^@]+@[\\d.]+,[\\d.]+"
+            )
 
-            try {
-                val response = client.newCall(request).execute()
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string() ?: ""
-
-                    // Define a regex pattern to match the desired URL format
-                    val pattern = Pattern.compile(
-                        "https://www\\.google\\.com/maps/preview/place/[^,]+,[^,]+,[^@]+@[\\d.]+,[\\d.]+"
-                    )
-
-                    val matcher = pattern.matcher(responseBody)
-                    if (matcher.find()) {
-                        val extractedUrl = matcher.group(0)
-                        return@withContext extractedUrl ?: ""
-                    } else {
-                        Log.w(TAG, "URL pattern not found in the response")
-                        return@withContext ""
-                    }
-                } else {
-                    Log.e(TAG, "Request failed with status code: ${response.code}")
-                    return@withContext ""
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error making request: ${e.message}")
-                e.printStackTrace()
-                return@withContext ""
+            val matcher = pattern.matcher(responseBody)
+            if (matcher.find()) {
+                matcher.group(0) ?: ""
+            } else {
+                Log.w(TAG, "URL pattern not found in the response")
+                ""
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching URL: ${e.message}")
+            e.printStackTrace()
+            ""
         }
+    }
 
     private fun extractLatLong(url: String): Coordinate? {
         val regex =

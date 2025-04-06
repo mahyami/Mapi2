@@ -9,6 +9,7 @@ import com.example.mapi.data.local.PlacesDao
 import com.example.mapi.data.remote.GetLatLongFromTakeoutUrlService
 import com.example.mapi.data.remote.PlacesApiService
 import com.example.mapi.data.remote.PlacesHttpClient
+import com.example.mapi.data.remote.TakeoutHttpClient
 import com.example.mapi.data.remote.services.ICoordinatesService
 import com.example.mapi.data.remote.services.IPlacesApiService
 import com.google.mapi.data.local.MapiDatabase
@@ -48,8 +49,12 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideCoordinatesService(): ICoordinatesService =
-        GetLatLongFromTakeoutUrlService()
+    fun provideTakeoutHttpClient(): TakeoutHttpClient = TakeoutHttpClient()
+        
+    @Provides
+    @Singleton
+    fun provideCoordinatesService(takeoutHttpClient: TakeoutHttpClient): ICoordinatesService =
+        GetLatLongFromTakeoutUrlService(takeoutHttpClient)
 
     @Provides
     @Singleton
