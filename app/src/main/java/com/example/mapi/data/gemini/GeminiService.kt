@@ -1,35 +1,36 @@
 package com.example.mapi.data.gemini
 
 import com.example.mapi.BuildConfig.GEMINI_API_KEY
+import com.example.mapi.data.local.PlacesDao
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
+import com.google.ai.client.generativeai.type.FunctionType
 import com.google.ai.client.generativeai.type.GenerateContentResponse
+import com.google.ai.client.generativeai.type.Schema
 import com.google.ai.client.generativeai.type.TextPart
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
-import com.example.mapi.data.local.PlacesDao
-import com.google.ai.client.generativeai.type.FunctionDeclaration
-import com.google.ai.client.generativeai.type.FunctionType
-import com.google.ai.client.generativeai.type.Schema
-import com.google.ai.client.generativeai.type.Tool
-import com.google.ai.client.generativeai.type.ToolConfig
 import javax.inject.Inject
 
 class GeminiService @Inject constructor(
     private val placesDao: PlacesDao,
 ) {
 
-    suspend fun sendMessage(prompt: String): GenerateContentResponse {
+    suspend fun sendMessage(userPrompt: String): GenerateContentResponse {
         val model = GenerativeModel(
-            modelName = "gemini-1.5-pro",
+            modelName = "gemini-2.0-flash-lite",
             apiKey = GEMINI_API_KEY,
-            generationConfig = buildGenerationConfig(),
+            generationConfig = generationConfig {
+                temperature = 0.3f
+                responseMimeType = "application/json"
+                responseSchema = buildResponseSchema()
+            },
             systemInstruction = buildSystemInstruction()
         )
 
         return model
             .startChat()
-            .sendMessage(prompt)
+            .sendMessage(userPrompt)
     }
 
     private suspend fun buildSystemInstruction(): Content {
@@ -91,8 +92,8 @@ class GeminiService @Inject constructor(
         }
         return """
                 Your an assistant to help users find the perfect café or restaurant or
-                    any place they are craving from their saved google places list.
-                    The user will describe what s.he is looking for and you will find it.
+                any place they are craving from their saved google places list.
+                The user will describe what s.he is looking for and you will find it.
                    
                 You will be provided with a list of my saved places, and I will then describe what I'm looking for in a place.
 
@@ -109,38 +110,32 @@ class GeminiService @Inject constructor(
                 """.trimIndent()
     }
 
-    private fun buildGenerationConfig() = generationConfig {
-        temperature = 0.3f
-        responseMimeType = "application/json"
-        responseSchema = buildResponseSchema()
+    /** OpenAPI Specification
+    {
+    "type": "object",
+    "properties": {
+    "response": {
+    "type": "array",
+    "description": "Array of items with name and URL",
+    "items": {
+    "type": "object",
+    "description": "Item with name and URL",
+    "required": ["name", "url"],
+    "properties": {
+    "name": {
+    "type": "string",
+    "description": "The name of the item"
+    },
+    "url": {
+    "type": "string",
+    "description": "The URL associated with the item"
+    }
+    }
+    }
+    }
+    }
     }
 
-    /** OpenAPI Specification
-     * {
-     *   "type": "object",
-     *   "properties": {
-     *     "response": {
-     *       "type": "array",
-     *       "description": "Array of items with name and URL",
-     *       "items": {
-     *         "type": "object",
-     *         "description": "Item with name and URL",
-     *         "required": ["name", "url"],
-     *         "properties": {
-     *           "name": {
-     *             "type": "string",
-     *             "description": "The name of the item"
-     *           },
-     *           "url": {
-     *             "type": "string",
-     *             "description": "The URL associated with the item"
-     *           }
-     *         }
-     *       }
-     *     }
-     *   }
-     * }
-     *
      */
 
     private fun buildResponseSchema() = Schema(
