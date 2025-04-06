@@ -1,12 +1,12 @@
 package com.example.mapi.domain
 
 import android.content.res.Resources
+import android.util.Log
 import com.example.mapi.R
 import com.example.mapi.data.remote.models.Coordinate
 import com.example.mapi.data.remote.services.ICoordinatesService
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import javax.inject.Inject
 
 class GetPlacesCoordinatesDomainService @Inject constructor(
@@ -14,27 +14,47 @@ class GetPlacesCoordinatesDomainService @Inject constructor(
 ) {
 
     suspend operator fun invoke(resources: Resources): List<Coordinate> {
-        return getUrlsFromJsonFile(resources)
+        return getUrlsFromFile(resources)
             .mapNotNull {
                 coordinatesService.getCoordinatesFromUrl(it)
             }
     }
 
-    private fun getUrlsFromJsonFile(resources: Resources): List<String> {
-        val inputStream = resources.openRawResource(R.raw.saved)
+    /**
+     * Copyright goes to Piyush 🚀
+     * https://github.com/poush
+     * */
+    private fun getUrlsFromFile(resources: Resources): List<String> {
+        val inputStream = resources.openRawResource(R.raw.test)
+        val urls = mutableListOf<String>()
 
-        val jsonString = inputStream.bufferedReader().use { it.readText() }
+        try {
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            reader.use { bufferedReader ->
+                bufferedReader.forEachLine { line ->
+                    // Split by comma, but handle potential quoted values in CSV
+                    val contents = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)".toRegex())
 
-        val placeListType = object : TypeToken<List<Place>>() {}.type
-        val places: List<Place> = Gson().fromJson(jsonString, placeListType)
+                    // Skip header row or malformed lines
+                    if (contents.size < 3 || contents[0].equals("Title", ignoreCase = true)) {
+                        return@forEachLine
+                    }
 
-        inputStream.close()
+                    // Extract URL - typically in the 3rd column (index 2)
+                    val urlString = contents[2].trim().removeSurrounding("\"")
+                    if (urlString.startsWith("https://www.google.com/maps")) {
+                        urls.add(urlString)
+                    }
+                }
+            }
+        } finally {
+            try {
+                inputStream.close()
+            } catch (e: Exception) {
+                Log.e("GetPlacesService", "Error closing input stream: ${e.message}")
+            }
+        }
 
-        return places.map { it.url }
+        return urls
     }
-
-    private data class Place(
-        @SerializedName("Title") val title: String,
-        @SerializedName("URL") val url: String,
-    )
 }
