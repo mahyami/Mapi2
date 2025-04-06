@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mapi.data.GeminiResponseParser
 import com.example.mapi.domain.GetPlacesCoordinatesDomainService
 import com.example.mapi.domain.PlacesRepository
+import com.example.mapi.domain.models.PlaceIdResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +58,7 @@ class MainViewModel @Inject constructor(
                 coordinates
             ).map { placesIdReceived ->
                 when (placesIdReceived) {
-                    PlacesRepository.PlaceIdResult.Failure -> {
+                    PlaceIdResult.Failure -> {
                         Log.d(
                             "MAHYA:: MainViewModel",
                             "nothing received!! "
@@ -65,7 +66,7 @@ class MainViewModel @Inject constructor(
                         null
                     }
 
-                    is PlacesRepository.PlaceIdResult.Success -> {
+                    is PlaceIdResult.Success -> {
                         Log.d(
                             "MAHYA:: MainViewModel",
                             "getPlacesDetails : placesIds ${placesIdReceived.ids}"

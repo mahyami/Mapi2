@@ -1,19 +1,24 @@
 package com.example.mapi.data.remote
 
+import com.example.mapi.data.remote.models.Center
+import com.example.mapi.data.remote.models.Circle
+import com.example.mapi.data.remote.models.Coordinate
+import com.example.mapi.data.remote.models.LocationRestriction
+import com.example.mapi.data.remote.models.SearchNearbyRequest
+import com.example.mapi.data.remote.models.SearchNearbyResponse
+import com.example.mapi.data.remote.services.IPlacesApiService
 import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.appendPathSegments
-import kotlinx.serialization.Serializable
 import javax.inject.Inject
-
 
 class PlacesApiService @Inject constructor(
     private val placesHttpClient: PlacesHttpClient
-) {
+) : IPlacesApiService {
 
-    suspend fun getPlaceDetails(id: String): Result<RemotePlace> {
+    override suspend fun getPlaceDetails(id: String): Result<RemotePlace> {
         return placesHttpClient.getClient()
             .get {
                 url {
@@ -24,10 +29,10 @@ class PlacesApiService @Inject constructor(
             }
     }
 
-    suspend fun searchNearbyPlacesToGetPlaceId(
+    override suspend fun searchNearbyPlacesToGetPlaceId(
         coordinate: Coordinate,
-        radius: Double = 1.0,
-        maxResults: Int = 1
+        radius: Double,
+        maxResults: Int
     ): Result<List<String>> {
         return try {
             val requestBody = SearchNearbyRequest(
@@ -62,51 +67,8 @@ class PlacesApiService @Inject constructor(
         }
     }
 
-
     companion object {
         private const val DETAILS_PATH = "v1/places/"
         private const val SEARCH_NEARBY_PATH = "v1/places:searchNearby"
     }
 }
-
-
-data class Coordinate(
-    val latitude: Double,
-    val longitude: Double
-)
-
-
-@Serializable
-data class SearchNearbyRequest(
-    val includedTypes: List<String>,
-    val maxResultCount: Int,
-    val locationRestriction: LocationRestriction
-)
-
-@Serializable
-data class LocationRestriction(
-    val circle: Circle
-)
-
-@Serializable
-data class Circle(
-    val center: Center,
-    val radius: Double
-)
-
-@Serializable
-data class Center(
-    val latitude: Double,
-    val longitude: Double
-)
-
-@Serializable
-data class SearchNearbyResponse(
-    val places: List<Place> = emptyList()
-)
-
-@Serializable
-data class Place(
-    val id: String
-)
-

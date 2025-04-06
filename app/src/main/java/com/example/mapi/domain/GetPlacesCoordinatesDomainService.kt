@@ -2,21 +2,21 @@ package com.example.mapi.domain
 
 import android.content.res.Resources
 import com.example.mapi.R
-import com.example.mapi.data.remote.Coordinate
-import com.example.mapi.data.remote.GetLatLongFromTakeoutUrlService
+import com.example.mapi.data.remote.models.Coordinate
+import com.example.mapi.data.remote.services.ICoordinatesService
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
 
 class GetPlacesCoordinatesDomainService @Inject constructor(
-    private val getLatLongFromTakeoutUrlService: GetLatLongFromTakeoutUrlService
+    private val coordinatesService: ICoordinatesService
 ) {
 
     suspend operator fun invoke(resources: Resources): List<Coordinate> {
         return getUrlsFromJsonFile(resources)
             .mapNotNull {
-                getLatLongFromTakeoutUrlService.getCoordinatesFromUrl(it)
+                coordinatesService.getCoordinatesFromUrl(it)
             }
     }
 
@@ -38,4 +38,3 @@ class GetPlacesCoordinatesDomainService @Inject constructor(
         @SerializedName("URL") val url: String,
     )
 }
-

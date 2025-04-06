@@ -1,19 +1,24 @@
 package com.example.mapi.domain
 
-import android.util.Log
-import com.example.mapi.data.toLocalPlace
-import com.example.mapi.data.gemini.GeminiService
+import com.example.mapi.data.gemini.IGeminiService
 import com.example.mapi.data.local.PlacesDao
-import com.example.mapi.data.remote.Coordinate
-import com.example.mapi.data.remote.PlacesApiService
+import com.example.mapi.data.remote.models.Coordinate
+import com.example.mapi.data.remote.services.IPlacesApiService
+import com.example.mapi.data.toLocalPlace
+import com.example.mapi.domain.models.PlaceIdResult
+import com.example.mapi.domain.models.PlaceResult
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PlacesRepository @Inject constructor(
-    private val placesApiService: PlacesApiService,
+    private val placesApiService: IPlacesApiService,
     private val placesDao: PlacesDao,
-    private val geminiService: GeminiService,
+    private val geminiService: IGeminiService,
 ) {
 
     fun getPlacesIdsFromCoordinates(coordinates: List<Coordinate>): Flow<PlaceIdResult> = flow {
@@ -29,42 +34,27 @@ class PlacesRepository @Inject constructor(
     }
 
     fun getPlacesDetails(ids: List<String>): Flow<Boolean> = flow {
-        val sizeOfPlaces = ids.size
-        val detailsInserted: MutableList<PlaceResult.Success> = mutableListOf()
-        ids.mapIndexed { index, id ->
-            getPlaceDetails(id).collect {
-                if (index == sizeOfPlaces - 1) {
-                    emit(detailsInserted.isNotEmpty())
-                }
-                if (it is PlaceResult.Success) {
-                    detailsInserted.add(it)
-                }
+        coroutineScope {
+            val deferredResults = ids.map { id ->
+                async { getPlaceDetail(id) }
             }
+            
+            val results = deferredResults.map { it.await() }
+            val successCount = results.count { it is PlaceResult.Success }
+            
+            emit(successCount > 0)
         }
     }
 
     suspend fun sendMessage(prompt: String) = geminiService.sendMessage(prompt)
 
-    private fun getPlaceDetails(id: String): Flow<PlaceResult> = flow {
-        placesApiService.getPlaceDetails(id)
-            .map {
-                Log.d("MAHYA:: PlacesRepository", "getPlaceDetails : $it")
-                placesDao.insertPlace(it.toLocalPlace())
-                emit(PlaceResult.Success(it.id))
+    private suspend fun getPlaceDetail(id: String): PlaceResult {
+        return placesApiService.getPlaceDetails(id)
+            .map { place ->
+                placesDao.insertPlace(place.toLocalPlace())
+                PlaceResult.Success(place.id)
             }
-            .onFailure {
-                emit(PlaceResult.Failure)
-            }
-    }
-
-    sealed interface PlaceResult {
-        data class Success(val placeId: String) : PlaceResult
-        data object Failure : PlaceResult
-    }
-
-    sealed interface PlaceIdResult {
-        data class Success(val ids: List<String>) : PlaceIdResult
-        data object Failure : PlaceIdResult
+            .getOrElse { PlaceResult.Failure }
     }
 
     suspend fun getPlacesCount() = placesDao.getPlacesCount()

@@ -1,5 +1,8 @@
 package com.example.mapi.data.remote
 
+import android.util.Log
+import com.example.mapi.data.remote.models.Coordinate
+import com.example.mapi.data.remote.services.ICoordinatesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -7,8 +10,15 @@ import okhttp3.Request
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-class GetLatLongFromTakeoutUrlService @Inject constructor() {
+class GetLatLongFromTakeoutUrlService @Inject constructor() : ICoordinatesService {
     private val client = OkHttpClient()
+    private val TAG = "GetLatLongService"
+
+    override suspend fun getCoordinatesFromUrl(url: String): Coordinate? {
+        val mapsUrl = getMapsUrlWithLatAndLong(url)
+        return extractLatLong(mapsUrl)
+    }
+
     private suspend fun getMapsUrlWithLatAndLong(url: String): String =
         withContext(Dispatchers.IO) {
             val request = Request.Builder()
@@ -31,15 +41,15 @@ class GetLatLongFromTakeoutUrlService @Inject constructor() {
                         val extractedUrl = matcher.group(0)
                         return@withContext extractedUrl ?: ""
                     } else {
-                        println("URL pattern not found in the response")
+                        Log.w(TAG, "URL pattern not found in the response")
                         return@withContext ""
                     }
                 } else {
-                    println("Request failed with status code: ${response.code}")
+                    Log.e(TAG, "Request failed with status code: ${response.code}")
                     return@withContext ""
                 }
             } catch (e: Exception) {
-                println("Error making request: ${e.message}")
+                Log.e(TAG, "Error making request: ${e.message}")
                 e.printStackTrace()
                 return@withContext ""
             }
@@ -55,10 +65,5 @@ class GetLatLongFromTakeoutUrlService @Inject constructor() {
         } else {
             null
         }
-    }
-
-    suspend fun getCoordinatesFromUrl(url: String): Coordinate? {
-        val mapsUrl = getMapsUrlWithLatAndLong(url)
-        return extractLatLong(mapsUrl)
     }
 }
