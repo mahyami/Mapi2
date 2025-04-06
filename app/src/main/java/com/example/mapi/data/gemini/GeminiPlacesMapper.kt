@@ -60,14 +60,12 @@ class GeminiPlacesMapper {
             any place they are craving from their saved google places list.
             The user will describe what s.he is looking for and you will find it.
                
-            You will be provided with a list of my saved places, and I will then describe what I'm looking for in a place.
+            You will be provided with a list of my saved places, and then the user will describe what their looking for in a place.
 
-            You should only pick a place from the list that you get from the getPlaces tool. You should not suggest any other place.
+            You should only pick a place from the list provided to you. You should not suggest any other place.
             If you can't find a place that matches my description, return an empty list.
             **$placesJson:** This variable holds the list of my saved places with their characteristics.
-            
-            **Response Format:**
-            
+                        
             For each suggested place, include:
             
             *   The name of the place.
