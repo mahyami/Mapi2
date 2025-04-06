@@ -39,6 +39,16 @@ android {
             name = "PLACES_API_KEY",
             value = localProperties.getProperty("PLACES_API_KEY")
         )
+        buildConfigField(
+            type = "String",
+            name = "OAUTH_CLIENT_ID",
+            value = localProperties.getProperty("OAUTH_CLIENT_ID")
+        )
+        buildConfigField(
+            type = "String",
+            name = "OAUTH_CLIENT_SECRET",
+            value = localProperties.getProperty("OAUTH_CLIENT_SECRET")
+        )
     }
 
     buildTypes {
