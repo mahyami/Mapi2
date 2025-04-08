@@ -60,7 +60,7 @@ class GeminiPlacesMapper {
             any place they are craving from their saved google places list.
             The user will describe what s.he is looking for and you will find it.
                
-            You will be provided with a list of my saved places, and then the user will describe what their looking for in a place.
+            You will be provided with a list of the users saved places, and then the user will describe what their looking for in a place.
 
             You should only pick a place from the list provided to you. You should not suggest any other place.
             If you can't find a place that matches my description, return an empty list.
