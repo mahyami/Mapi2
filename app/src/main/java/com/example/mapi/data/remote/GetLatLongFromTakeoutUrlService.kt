@@ -22,7 +22,8 @@ class GetLatLongFromTakeoutUrlService @Inject constructor(
         return try {
             val response = takeoutHttpClient.getClient().get(url)
             val responseBody = response.bodyAsText()
-            
+
+            Log.d(TAG, "Response Body: $responseBody")
             // Define a regex pattern to match the desired URL format
             val pattern = Pattern.compile(
                 "https://www\\.google\\.com/maps/preview/place/[^,]+,[^,]+,[^@]+@[\\d.]+,[\\d.]+"
@@ -44,7 +45,8 @@ class GetLatLongFromTakeoutUrlService @Inject constructor(
 
     private fun extractLatLong(url: String): Coordinate? {
         val regex =
-            "https://www\\.google\\.com/maps/preview/place/[^@]+@([\\d.]+),([\\d.]+)".toRegex()
+            "https://www\\.google\\.com/maps/preview/place/[^@]+@([\\d.]+),([\\d.]+)"
+                .toRegex()
         val matchResult = regex.find(url)
         return if (matchResult != null) {
             val (lat, long) = matchResult.destructured

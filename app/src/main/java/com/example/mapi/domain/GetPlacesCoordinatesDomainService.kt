@@ -25,7 +25,7 @@ class GetPlacesCoordinatesDomainService @Inject constructor(
      * https://github.com/poush
      * */
     private fun getUrlsFromFile(resources: Resources): List<String> {
-        val inputStream = resources.openRawResource(R.raw.test)
+        val inputStream = resources.openRawResource(R.raw.food)
         val urls = mutableListOf<String>()
 
         try {
